@@ -24,6 +24,14 @@ LANGUAGES=en # Optional. Without will export all languages
 bun run export
 ```
 
+## To only perform transforms:
+
+Once you have the data in output/data, you can just perform the transformations. This avoids hitting the OCM endpoint unnecessarily.
+
+```bash
+bun run transform
+```
+
 Content is exported into the /output folder.
 
 ## Transformers

@@ -69,8 +69,11 @@ export const fetchItem = (itemId: string) =>
     { headers }
   ).then((res) => res.json());
 
-export const saveData = (filename: string, data: any) =>
-  fs.writeFileSync(path.resolve(filename), JSON.stringify(data, null, 2));
+export const loadData = (filepath: string) =>
+  JSON.parse(fs.readFileSync(filepath, "utf8"));
+
+export const saveData = (filepath: string, data: any) =>
+  fs.writeFileSync(path.resolve(filepath), JSON.stringify(data, null, 2));
 
 export const saveBinary = async (binary: Binary, dir: string) => {
   const url = `${endpoint}/assets/${binary.id}/native/?format=webp&channelToken=${channelToken}`;
