@@ -7,6 +7,7 @@ import {
   getBinaries,
   saveBinary,
   saveData,
+  getTransformer,
 } from "./lib/util";
 import type { Item } from "./lib/types";
 
@@ -23,9 +24,9 @@ const languageQuery = languages.length
   : "";
 
 // TODO: define transformer per content type.
-const transformer = {
+/*const transformer = {
   title: "fields.page_title",
-};
+};*/
 
 const getContentTypeItems = async (contentType: string) => {
   const contentTypeQuery = `type eq "${contentType}"${languageQuery}`;
@@ -42,6 +43,9 @@ const getContentTypeItems = async (contentType: string) => {
   fs.mkdirSync(dirs.data, { recursive: true });
   fs.mkdirSync(dirs.transformed, { recursive: true });
   fs.mkdirSync(dirs.binaries, { recursive: true });
+
+  // Get transformer, if one is available for this content type.
+  const transformer = await getTransformer(contentType);
 
   // Query required items.
   const items = await fetchItems(contentTypeQuery);
@@ -62,10 +66,12 @@ const getContentTypeItems = async (contentType: string) => {
     binaryUrls.forEach(async (binary) => saveBinary(binary, dirs.binaries));
 
     // Save transformed data.
-    saveData(
-      `${dirs.transformed}/${itemId}-${itemExpanded.language}.json`,
-      transform(itemExpanded, transformer)
-    );
+    if (transformer) {
+      saveData(
+        `${dirs.transformed}/${itemId}-${itemExpanded.language}.json`,
+        transform(itemExpanded, transformer)
+      );
+    }
 
     // Save original data.
     saveData(

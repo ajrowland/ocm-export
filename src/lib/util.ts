@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import type { Binary } from "./types";
+import consola from "consola";
 
 const {
   CHANNEL_TOKEN: channelToken = "",
@@ -77,4 +78,18 @@ export const saveBinary = async (binary: Binary, dir: string) => {
   Readable.fromWeb((await fetch(url)).body as any).pipe(
     fs.createWriteStream(`${dir}/${binary.name}.webp`)
   );
+};
+
+export const getTransformer = async (contentType: string) => {
+  try {
+    return (
+      await import(
+        path.resolve(`src/transformers/${contentType.toLocaleLowerCase()}`)
+      )
+    ).default;
+  } catch {
+    consola.info(
+      "No transformer available for this content type. The data will not be tranformered."
+    );
+  }
 };

@@ -2,7 +2,7 @@
 
 Rough and ready project to obtain content from OCM. This application is EOF 2025, so my motivation is to retrieve the content in proparation to migrate to another CMS.
 
-To install dependencies:
+## To install dependencies:
 
 ```bash
 bun install
@@ -18,10 +18,22 @@ CONTENT_TYPES=some-type,another-type # At least one type required
 LANGUAGES=en # Optional. Without will export all languages
 ```
 
-To run:
+## To perform export:
 
 ```bash
 bun run export
 ```
 
 Content is exported into the /output folder.
+
+## Transformers
+
+Create a file with the same content type name (but all lowercase) in the /src/transformers folders.
+
+This must have a default export. For example (src/transformers/article-example.ts):
+
+```
+export default {
+  title: "fields.page_title",
+};
+```
