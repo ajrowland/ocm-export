@@ -1,5 +1,7 @@
 # Oracle Content Manager export
 
+Rough and ready project to obtain content from OCM. This application is EOF 2025, so my motivation is to retrieve the content in proparation to migrate to another CMS.
+
 To install dependencies:
 
 ```bash
