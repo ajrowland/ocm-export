@@ -24,6 +24,8 @@ LANGUAGES=en # Optional. Without will export all languages
 bun run export
 ```
 
+Content is exported into the /output folder.
+
 ## To only perform transforms:
 
 Once you have the data in output/data, you can just perform the transformations. This avoids hitting the OCM endpoint unnecessarily.
@@ -32,7 +34,7 @@ Once you have the data in output/data, you can just perform the transformations.
 bun run transform
 ```
 
-Content is exported into the /output folder.
+Transformations are saved into the /output/transforms folder.
 
 ## Transformers
 

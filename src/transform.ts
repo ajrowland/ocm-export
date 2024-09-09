@@ -22,12 +22,12 @@ const transformContentTypeItems = async (contentType: string) => {
 
   const dirs = {
     data: `output/data/${contentType}`,
-    transformed: `output/transformed/${contentType}`,
+    transforms: `output/transforms/${contentType}`,
     binaries: `output/binaries/${contentType}`,
   };
 
   // Create transformed directory.
-  fs.mkdirSync(dirs.transformed, { recursive: true });
+  fs.mkdirSync(dirs.transforms, { recursive: true });
 
   // Get transformer, if one is available for this content type.
   const transformer = await getTransformer(contentType);
@@ -45,7 +45,7 @@ const transformContentTypeItems = async (contentType: string) => {
 
     // Perform transform.
     saveData(
-      `${dirs.transformed}/${file}`,
+      `${dirs.transforms}/${file}`,
       transform(itemExpanded, transformer)
     );
   });
