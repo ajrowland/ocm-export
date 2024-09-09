@@ -24,7 +24,7 @@ LANGUAGES=en # Optional. Without will export all languages
 bun run export
 ```
 
-Content is exported into the /output folder.
+Content is exported into the /output/<channel token> folder.
 
 ## To only perform transforms:
 
@@ -34,7 +34,7 @@ Once you have the data in output/data, you can just perform the transformations.
 bun run transform
 ```
 
-Transformations are saved into the /output/transforms folder.
+Transformations are saved into the /output/<channel token>/transforms folder.
 
 ## Transformers
 

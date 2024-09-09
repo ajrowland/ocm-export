@@ -1,7 +1,12 @@
 import fs from "node:fs";
 import consola from "consola";
 import transform from "./lib/transform";
-import { loadData, saveData, getTransformer } from "./lib/util";
+import {
+  getOutputDirectories,
+  loadData,
+  saveData,
+  getTransformer,
+} from "./lib/util";
 
 const contentTypes = process.env.CONTENT_TYPES?.split(",") || [];
 
@@ -18,16 +23,9 @@ const languageQuery = languages.length
 const transformContentTypeItems = async (contentType: string) => {
   const contentTypeQuery = `type eq "${contentType}"${languageQuery}`;
 
-  consola.info(`Exporting content with query: ${contentTypeQuery}`);
+  consola.info(`Transforming content with query: ${contentTypeQuery}`);
 
-  const dirs = {
-    data: `output/data/${contentType}`,
-    transforms: `output/transforms/${contentType}`,
-    binaries: `output/binaries/${contentType}`,
-  };
-
-  // Create transformed directory.
-  fs.mkdirSync(dirs.transforms, { recursive: true });
+  const dirs = getOutputDirectories(contentType);
 
   // Get transformer, if one is available for this content type.
   const transformer = await getTransformer(contentType);

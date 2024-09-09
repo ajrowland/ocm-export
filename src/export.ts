@@ -2,6 +2,7 @@ import fs from "node:fs";
 import consola from "consola";
 import transform from "./lib/transform";
 import {
+  getOutputDirectories,
   fetchItems,
   fetchItem,
   getBinaries,
@@ -28,16 +29,7 @@ const getContentTypeItems = async (contentType: string) => {
 
   consola.info(`Exporting content with query: ${contentTypeQuery}`);
 
-  const dirs = {
-    data: `output/data/${contentType}`,
-    transforms: `output/transformed/${contentType}`,
-    binaries: `output/binaries/${contentType}`,
-  };
-
-  // Create directories.
-  fs.mkdirSync(dirs.data, { recursive: true });
-  fs.mkdirSync(dirs.transforms, { recursive: true });
-  fs.mkdirSync(dirs.binaries, { recursive: true });
+  const dirs = getOutputDirectories(contentType);
 
   // Get transformer, if one is available for this content type.
   const transformer = await getTransformer(contentType);

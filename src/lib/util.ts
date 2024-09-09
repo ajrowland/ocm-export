@@ -12,6 +12,21 @@ const {
 
 const headers = { Authorization: `Bearer ${bearerToken}` };
 
+export const getOutputDirectories = (contentType: string) => {
+  const dirs = {
+    data: `output/${channelToken}/data/${contentType}`,
+    transforms: `output/${channelToken}/transforms/${contentType}`,
+    binaries: `output/${channelToken}/binaries/${contentType}`,
+  };
+
+  // Create directories.
+  fs.mkdirSync(dirs.data, { recursive: true });
+  fs.mkdirSync(dirs.transforms, { recursive: true });
+  fs.mkdirSync(dirs.binaries, { recursive: true });
+
+  return dirs;
+};
+
 export const getIdFromUrl = (url: string) => {
   const paths = path.parse(url);
   const slugs = paths.dir.split("/");
