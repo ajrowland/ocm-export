@@ -23,11 +23,6 @@ const languageQuery = languages.length
   ? ` and (language eq "${languages.join('" or language eq "')}")`
   : "";
 
-// TODO: define transformer per content type.
-/*const transformer = {
-  title: "fields.page_title",
-};*/
-
 const getContentTypeItems = async (contentType: string) => {
   const contentTypeQuery = `type eq "${contentType}"${languageQuery}`;
 
