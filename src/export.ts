@@ -1,10 +1,7 @@
-import fs from "node:fs";
 import consola from "consola";
-import transform from "./lib/transform";
 import {
   getOutputDirectories,
   fetchItems,
-  fetchItem,
   getBinaries,
   saveBinary,
   saveData,
@@ -34,42 +31,43 @@ const getContentTypeItems = async (contentType: string) => {
   // Get transformer, if one is available for this content type.
   const transformer = await getTransformer(contentType);
 
-  // Query required items.
-  const items = await fetchItems(contentTypeQuery);
+  const scrollItems = async (scrollId?: string) => {
+    // Query required items.
+    const itemsResponse = await fetchItems(contentTypeQuery, scrollId);
 
-  // Get all item ids.
-  const itemIds: string[] = items.items
-    // .slice(1, 2)
-    .map((item: Item) => item.id);
+    // Get binaries and transform data for each item.
+    itemsResponse.items?.forEach(async (item: Item) => {
+      // Get required binaries for item.
+      const binaryUrls = getBinaries(Object.values(item), "image/webp");
 
-  // Get expanded data for each item.
-  itemIds.forEach(async (itemId) => {
-    const itemExpanded = await fetchItem(itemId);
+      // Download all binaries.
+      binaryUrls.forEach(async (binary) => saveBinary(binary, dirs.binaries));
 
-    // Get required binaries for item.
-    const binaryUrls = getBinaries(Object.values(itemExpanded), "image/webp");
+      // Save transformed data.
+      if (transformer) {
+        saveData(
+          `${dirs.transforms}/${item.id}-${item.language}.json`,
+          transformer(item)
+        );
+      }
 
-    // Download all binaries.
-    binaryUrls.forEach(async (binary) => saveBinary(binary, dirs.binaries));
+      // Save original data.
+      saveData(`${dirs.data}/${item.id}-${item.language}.json`, item);
 
-    // Save transformed data.
-    if (transformer) {
-      saveData(
-        `${dirs.transforms}/${itemId}-${itemExpanded.language}.json`,
-        transform(itemExpanded, transformer)
-      );
-    }
+      consola.success(`Exported ${item.name} (${item.id})`);
+    });
 
-    // Save original data.
-    saveData(
-      `${dirs.data}/${itemId}-${itemExpanded.language}.json`,
-      itemExpanded
-    );
+    return itemsResponse.scrollId;
+  };
 
-    consola.success(`Exported ${itemExpanded.name} (${itemExpanded.id})`);
-  });
+  let scrollId = "";
+
+  do {
+    scrollId = await scrollItems(scrollId);
+    consola.info(`Attempting to scroll with id ${scrollId}`);
+  } while (scrollId);
 };
 
-contentTypes.forEach(async (contentType) => {
-  getContentTypeItems(contentType);
-});
+for (const contentType of contentTypes) {
+  await getContentTypeItems(contentType);
+}

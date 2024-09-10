@@ -16,7 +16,7 @@ export const getOutputDirectories = (contentType: string) => {
   const dirs = {
     data: `output/${channelToken}/data/${contentType}`,
     transforms: `output/${channelToken}/transforms/${contentType}`,
-    binaries: `output/${channelToken}/binaries/${contentType}`,
+    binaries: `output/${channelToken}/binaries`,
   };
 
   // Create directories.
@@ -66,11 +66,13 @@ export const getBinaries = (data: any[], mimeType: string) => {
   );
 };
 
-export const fetchItems = (q: string) =>
+export const fetchItems = (q: string, scrollId: string = "") =>
   fetch(
     `${endpoint}/items?${new URLSearchParams({
       channelToken,
       q,
+      scroll: "true",
+      scrollId,
     })}`,
     { headers }
   ).then((res) => res.json());
@@ -87,6 +89,18 @@ export const fetchItem = (itemId: string) =>
 export const loadData = (filepath: string) =>
   JSON.parse(fs.readFileSync(filepath, "utf8"));
 
+export const loadTransformData = (
+  id: string,
+  contentType: string,
+  language: string
+) => {
+  const dirs = getOutputDirectories(contentType);
+
+  const filepath = `${dirs.transforms}/${id}-${language}.json`;
+
+  return fs.existsSync(filepath) ? loadData(filepath) : {};
+};
+
 export const saveData = (filepath: string, data: any) =>
   fs.writeFileSync(path.resolve(filepath), JSON.stringify(data, null, 2));
 
@@ -94,7 +108,9 @@ export const saveBinary = async (binary: Binary, dir: string) => {
   const url = `${endpoint}/assets/${binary.id}/native/?format=webp&channelToken=${channelToken}`;
 
   Readable.fromWeb((await fetch(url)).body as any).pipe(
-    fs.createWriteStream(`${dir}/${binary.name}.webp`)
+    fs.createWriteStream(
+      `${dir}/${binary.id}-${binary.name.replace("_", "-")}.webp`
+    )
   );
 };
 

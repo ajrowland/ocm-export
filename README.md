@@ -40,10 +40,10 @@ Transformations are saved into the /output/\<channel token\>/transforms folder.
 
 Create a file with the same content type name (but all lowercase) in the /src/transformers folders.
 
-This must have a default export. For example (src/transformers/article-example.ts):
+This must have a default export, passing in the item to be transformed. For example (src/transformers/article-example.ts):
 
 ```
-export default {
-  title: "fields.page_title",
+export default (originalItem) => {
+  title: originalItem.fields.page_title,
 };
 ```
